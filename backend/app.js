@@ -24,7 +24,7 @@ mongoose.connect(
     ? `${MONGO_LINK}`
     : 'mongodb+srv://admin:admin123@cluster0.cn2lj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
 );
-const { PORT } = process.env || 5000;
+
 
 const app = express();
 
