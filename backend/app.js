@@ -22,10 +22,12 @@ const app = express();
 mongoose.connect(
   NODE_ENV === 'production'
     ? `${MONGO_LINK}`
-    : 'mongodb://localhost:27017/mestodb',
+    : 'mongodb+srv://admin:admin123@cluster0.cn2lj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
 );
+const { PORT } = process.env || 5000;
 
-// Безопасность. Обработка CORS запросов
+const app = express();
+
 const options = {
   origin: [
     'http://localhost:3000',
