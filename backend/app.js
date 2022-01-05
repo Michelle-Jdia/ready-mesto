@@ -73,7 +73,7 @@ app.get('/logout', (req, res, next) => {
   res
     .cookie('jwt', '', {
       maxAge: -1,
-      // httpOnly: true,
+      httpOnly: true,
       secure: true,
       sameSite: 'none',
     })
