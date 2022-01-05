@@ -23,6 +23,7 @@ mongoose.connect('mongodb+srv://admin:admin123@cluster0.cn2lj.mongodb.net/myFirs
 const options = {
   origin: [
     'http://localhost:3000',
+    'https://localhost:3000',
     'http://mest.michelle.nomoredomains.club',
     'https://mest.michelle.nomoredomains.club',
   ],
