@@ -26,8 +26,6 @@ mongoose.connect(
 );
 
 
-const app = express();
-
 const options = {
   origin: [
     'http://localhost:3000',
