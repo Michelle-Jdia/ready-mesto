@@ -2,9 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const { celebrate, Joi } = require('celebrate');
-const { errors } = require('celebrate');
-const cors = require('cors');
+const { celebrate, Joi } = require('celebrate'); // валидация приходящих данных
+const { errors } = require('celebrate'); // для обработки ошибок joi, celebrate
+const cors = require('cors'); // пакет node.js
 const router = require('./routes');
 
 const auth = require('./middlewares/auth');
@@ -14,14 +14,18 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { createUser, login } = require('./controllers/users');
 
-
 const { PORT } = process.env;
-
+const { NODE_ENV, MONGO_LINK } = process.env;
 
 const app = express();
 
-mongoose.connect('mongodb+srv://admin:admin123@cluster0.cn2lj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority');
+mongoose.connect(
+  NODE_ENV === 'production'
+    ? `${MONGO_LINK}`
+    : 'mongodb://localhost:27017/mestodb',
+);
 
+// Безопасность. Обработка CORS запросов
 const options = {
   origin: [
     'http://localhost:3000',
@@ -36,17 +40,17 @@ const options = {
   credentials: true,
 };
 
-app.use('*', cors(options));
+app.use('*', cors(options)); // ПЕРВЫМ!
 
 app.use(cookieParser());
 app.use(express.json());
 
-app.use(requestLogger);
+app.use(requestLogger); // подключаем логгер запросов
 
 app.post(
   '/signup',
   celebrate({
-
+    // валидируем body
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
@@ -62,7 +66,7 @@ app.post(
 app.post(
   '/signin',
   celebrate({
-
+    // валидируем body
     body: Joi.object().keys({
       email: Joi.string().required().email(),
       password: Joi.string()
@@ -84,14 +88,15 @@ app.get('/logout', (req, res, next) => {
   next();
 });
 
+// авторизация
 app.use(auth);
 
-app.use(router);
+app.use(router); // запускаем роутер
 
-app.use(errorLogger);
+app.use(errorLogger); // подключаем логгер ошибок
 
-app.use(errors());
-app.use(centralizedErrors);
+app.use(errors()); // обработчик ошибок celebrate
+app.use(centralizedErrors); // централизованная обработка ошибок
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
