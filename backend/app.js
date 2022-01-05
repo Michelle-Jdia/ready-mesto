@@ -2,9 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const { celebrate, Joi } = require('celebrate'); // валидация приходящих данных
-const { errors } = require('celebrate'); // для обработки ошибок joi, celebrate
-const cors = require('cors'); // пакет node.js
+const { celebrate, Joi } = require('celebrate');
+const { errors } = require('celebrate');
+const cors = require('cors');
 const router = require('./routes');
 
 const auth = require('./middlewares/auth');
@@ -14,22 +14,15 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { createUser, login } = require('./controllers/users');
 
-const { PORT } = process.env;
-const { NODE_ENV, MONGO_LINK } = process.env;
+const { PORT } = process.env || 5000;
 
 const app = express();
 
-mongoose.connect(
-  NODE_ENV === 'production'
-    ? `${MONGO_LINK}`
-    : 'mongodb+srv://admin:admin123@cluster0.cn2lj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-);
-
+mongoose.connect('mongodb+srv://admin:admin123@cluster0.cn2lj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority');
 
 const options = {
   origin: [
     'http://localhost:3000',
-    'https://localhost:3000',
     'http://mest.michelle.nomoredomains.club',
     'https://mest.michelle.nomoredomains.club',
   ],
@@ -80,7 +73,7 @@ app.get('/logout', (req, res, next) => {
   res
     .cookie('jwt', '', {
       maxAge: -1,
-      httpOnly: true,
+      // httpOnly: true,
       secure: true,
       sameSite: 'none',
     })
